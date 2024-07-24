@@ -9,22 +9,69 @@
         .entailment { background-color: #d4edda; } /* Green */
         .neutrality { background-color: #fff3cd; } /* Yellow */
         .contradiction { background-color: #f8d7da; } /* Red */
+        .popup {
+            display: none;
+            position: fixed;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .popup.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Comparison Result</h1>
+        <h2>Ground Truths</h2>
         {% for ground_truth in ground_truths %}
             <p><strong>Ground Truth {{ loop.index }}:</strong> {{ ground_truth }}</p>
         {% endfor %}
         <p><strong>LLM Output:</strong></p>
         <p>
-            {% for clause, similarity, relationship in results %}
-                <span class="{{ relationship.lower() if relationship else 'neutrality' }}">{{ clause }}.</span>
+            {% for clause, similarity, relationship, contradictory_truths in results %}
+                <span class="{{ relationship.lower() if relationship else 'neutrality' }}"
+                      onclick="showContradictions({{ loop.index0 }})"
+                      style="cursor: pointer;">
+                      {{ clause }}.
+                </span>
+                <div id="popup-{{ loop.index0 }}" class="popup">
+                    <strong>Contradicts:</strong>
+                    <ul>
+                        {% for truth in contradictory_truths %}
+                            <li>Ground Truth {{ ground_truths.index(truth) + 1 }}: {{ truth }}</li>
+                        {% endfor %}
+                    </ul>
+                    <!-- <strong>CONTRADICTION</strong>
+                    <p>(by existence, reflexivity) Ground Truth 1: XYZ Corp. is experiencing a decline in ARR because of poor leadership choices.</p>
+                    <p>(by existence, reflexivity) Ground Truth 2: XYZ Corp. now has a new competitor, ABC Corp., projected to take 45% of the market share.</p>
+                    <p>(by existence, reflexivity) Ground Truth 3: The market surrounding XYZ Corp is stagnating.</p>
+                    <p>Let:</p>
+                    <ul>
+                        <li>a = XYZ Corp's ARR is declining</li>
+                        <li>b = XYZ Corp will likely have 45% market share taken</li>
+                        <li>c = The market is stagnant</li>
+                    </ul>
+                    <p>By a and c, we have d = XYZ Corp's market share is decreasing.</p>
+                    <p>Since the market share is decreasing, we reach a contradiction with the conclusion: "The company is poised for growth."</p> -->
+                <button onclick="closePopup({{ loop.index0 }})">Close</button>
+                </div>
             {% endfor %}
         </p>
         <p><strong>Accuracy:</strong> {{ accuracy }}%</p>
         <a href="/">Back</a>
     </div>
+
+    <script>
+        function showContradictions(index) {
+            document.getElementById(`popup-${index}`).classList.add('active');
+        }
+
+        function closePopup(index) {
+            document.getElementById(`popup-${index}`).classList.remove('active');
+        }
+    </script>
 </body>
 </html>

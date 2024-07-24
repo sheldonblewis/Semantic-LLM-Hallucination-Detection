@@ -5,11 +5,9 @@ import warnings
 
 app = Flask(__name__)
 
-# # Load fine-tuned model and tokenizer
-# tokenizer = BertTokenizer.from_pretrained('./fine_tuned_bert')
-# model = BertForSequenceClassification.from_pretrained('./fine_tuned_bert')
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
+# Load fine-tuned model and tokenizer
+tokenizer = BertTokenizer.from_pretrained('./fine_tuned_bert')
+model = BertForSequenceClassification.from_pretrained('./fine_tuned_bert')
 
 def encode_text(text):
     inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512)
@@ -17,14 +15,14 @@ def encode_text(text):
     return outputs.logits
 
 def compare_clauses(ground_truths, llm_output):
-    clauses = [clause.strip() for clause in llm_output.split('. ') if clause.strip()] # split clauses by conjunctions, periods
-    # clauses = [clause.strip() for clause in llm_output.split('. ', ', but', ', and', ', or', ', nor', ', yet', ', so') if clause.strip()] # split clauses by conjunctions, periods
+    clauses = [clause.strip() for clause in llm_output.split('. ', ', but', ', and', ', or', ', nor', ', yet', ', so') if clause.strip()] # split clauses by conjunctions, periods
     results = []
     sum_lowest_similarities = 0
 
     for clause in clauses:
         lowest_similarity = float('inf')
         worst_relationship = None
+        contradicted_truths = []
 
         for ground_truth in ground_truths:
             ground_truth_vec = encode_text(ground_truth)
@@ -35,9 +33,13 @@ def compare_clauses(ground_truths, llm_output):
             if similarity < lowest_similarity:
                 lowest_similarity = similarity
                 worst_relationship = relationship
+            
+            # Check if the clause contradicts the ground truth
+            if relationship == 'Contradiction':
+                contradicted_truths.append(ground_truth)
         
         sum_lowest_similarities += lowest_similarity
-        results.append((clause, lowest_similarity, worst_relationship))
+        results.append((clause, lowest_similarity, worst_relationship, contradicted_truths))
 
     accuracy = (sum_lowest_similarities / len(clauses)) * 100 if clauses else 0
     return results, accuracy
@@ -57,7 +59,6 @@ def index():
 @app.route('/detect', methods=['POST'])
 def compare():
     ground_truths = request.form.getlist('ground_truth')
-    print("Ground Truths received:", ground_truths)
     llm_output = request.form['llm_output']
     results, accuracy = compare_clauses(ground_truths, llm_output)
     return render_template('result.html', results=results, llm_output=llm_output, ground_truths=ground_truths, accuracy=accuracy)
