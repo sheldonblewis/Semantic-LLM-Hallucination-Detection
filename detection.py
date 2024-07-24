@@ -17,7 +17,8 @@ def encode_text(text):
     return outputs.logits
 
 def compare_clauses(ground_truths, llm_output):
-    clauses = [clause.strip() for clause in llm_output.split('.') if clause.strip()]
+    clauses = [clause.strip() for clause in llm_output.split('. ') if clause.strip()] # split clauses by conjunctions, periods
+    # clauses = [clause.strip() for clause in llm_output.split('. ', ', but', ', and', ', or', ', nor', ', yet', ', so') if clause.strip()] # split clauses by conjunctions, periods
     results = []
     sum_lowest_similarities = 0
 
@@ -56,9 +57,10 @@ def index():
 @app.route('/detect', methods=['POST'])
 def compare():
     ground_truths = request.form.getlist('ground_truth')
+    print("Ground Truths received:", ground_truths)
     llm_output = request.form['llm_output']
     results, accuracy = compare_clauses(ground_truths, llm_output)
-    return render_template('result.html', results=results, llm_output=llm_output, accuracy=accuracy, ground_truths=ground_truths)
+    return render_template('result.html', results=results, llm_output=llm_output, ground_truths=ground_truths, accuracy=accuracy)
 
 if __name__ == '__main__':
     app.run(debug=True)

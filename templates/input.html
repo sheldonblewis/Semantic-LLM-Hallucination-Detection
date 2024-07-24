@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semantic Entailment Detection</title>
+    <title>LLM Hallucination Detection</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .ground-truth {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -12,27 +17,33 @@
         <form action="/detect" method="post">
             <div id="ground_truths">
                 <div>
-                    <label for="ground_truth">Ground Truth:</label>
-                    <textarea name="ground_truth" rows="4" cols="50"></textarea>
+                    <div class="ground-truth">
+                        <label for="ground_truth_1">Ground Truth 1:</label>
+                        <textarea name="ground_truth" id="ground_truth_1" rows="4" cols="50"></textarea>
+                    </div>
                 </div>
             </div>
-            <button type="button" onclick="addGroundTruth()">Add Another Ground Truth</button>        
+            <button type="button" onclick="addGroundTruth()">Add Another Ground Truth</button>
             <div>
                 <label for="llm_output">LLM Output:</label>
                 <textarea id="llm_output" name="llm_output" rows="4" cols="50"></textarea>
             </div>
             <div>
-                <button type="submit">Detect</button>
+                <button type="submit">Detect Hallucinations</button>
             </div>
         </form>
 
         <script>
+            let groundTruthCounter = 1;
+
             function addGroundTruth() {
+                groundTruthCounter++;
                 const groundTruthsDiv = document.getElementById('ground_truths');
                 const newGroundTruthDiv = document.createElement('div');
+                newGroundTruthDiv.classList.add('ground-truth');
                 newGroundTruthDiv.innerHTML = `
-                    <label for="ground_truth">Ground Truth:</label>
-                    <textarea name="ground_truth" rows="4" cols="50"></textarea>
+                    <label for="ground_truth_${groundTruthCounter}">Ground Truth ${groundTruthCounter}:</label>
+                    <textarea name="ground_truth" id="ground_truth_${groundTruthCounter}" rows="4" cols="50"></textarea>
                 `;
                 groundTruthsDiv.appendChild(newGroundTruthDiv);
             }

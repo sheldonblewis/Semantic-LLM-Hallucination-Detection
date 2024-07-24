@@ -7,20 +7,20 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
         .entailment { background-color: #d4edda; } /* Green */
-        .contradiction { background-color: #f8d7da; } /* Red */
         .neutrality { background-color: #fff3cd; } /* Yellow */
+        .contradiction { background-color: #f8d7da; } /* Red */
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Comparison Result</h1>
         {% for ground_truth in ground_truths %}
-            <p><strong>Ground Truth:</strong> {{ ground_truth }}</p>
+            <p><strong>Ground Truth {{ loop.index }}:</strong> {{ ground_truth }}</p>
         {% endfor %}
         <p><strong>LLM Output:</strong></p>
         <p>
             {% for clause, similarity, relationship in results %}
-                <span class="{{ relationship.lower() }}">{{ clause }}.</span>
+                <span class="{{ relationship.lower() if relationship else 'neutrality' }}">{{ clause }}.</span>
             {% endfor %}
         </p>
         <p><strong>Accuracy:</strong> {{ accuracy }}%</p>
