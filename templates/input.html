@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Entailment Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>LLM Hallucination Detection</h1>
+        <form action="/detect" method="post">
+            <div id="ground_truths">
+                <div>
+                    <label for="ground_truth">Ground Truth:</label>
+                    <textarea name="ground_truth" rows="4" cols="50"></textarea>
+                </div>
+            </div>
+            <button type="button" onclick="addGroundTruth()">Add Another Ground Truth</button>        
+            <div>
+                <label for="llm_output">LLM Output:</label>
+                <textarea id="llm_output" name="llm_output" rows="4" cols="50"></textarea>
+            </div>
+            <div>
+                <button type="submit">Detect</button>
+            </div>
+        </form>
+
+        <script>
+            function addGroundTruth() {
+                const groundTruthsDiv = document.getElementById('ground_truths');
+                const newGroundTruthDiv = document.createElement('div');
+                newGroundTruthDiv.innerHTML = `
+                    <label for="ground_truth">Ground Truth:</label>
+                    <textarea name="ground_truth" rows="4" cols="50"></textarea>
+                `;
+                groundTruthsDiv.appendChild(newGroundTruthDiv);
+            }
+        </script>
+    </div>
+</body>
+</html>

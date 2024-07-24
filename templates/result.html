@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparison Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .entailment { background-color: #d4edda; } /* Green */
+        .contradiction { background-color: #f8d7da; } /* Red */
+        .neutrality { background-color: #fff3cd; } /* Yellow */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Comparison Result</h1>
+        {% for ground_truth in ground_truths %}
+            <p><strong>Ground Truth:</strong> {{ ground_truth }}</p>
+        {% endfor %}
+        <p><strong>LLM Output:</strong></p>
+        <p>
+            {% for clause, similarity, relationship in results %}
+                <span class="{{ relationship.lower() }}">{{ clause }}.</span>
+            {% endfor %}
+        </p>
+        <p><strong>Accuracy:</strong> {{ accuracy }}%</p>
+        <a href="/">Back</a>
+    </div>
+</body>
+</html>
