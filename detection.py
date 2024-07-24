@@ -9,11 +9,13 @@ app = Flask(__name__)
 tokenizer = BertTokenizer.from_pretrained('./fine_tuned_bert')
 model = BertForSequenceClassification.from_pretrained('./fine_tuned_bert')
 
+# Tokenize text using fine-tuned model and tokenizer
 def encode_text(text):
     inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512)
     outputs = model(**inputs)
     return outputs.logits
 
+# Evaluate clauses
 def compare_clauses(ground_truths, llm_output):
     clauses = [clause.strip() for clause in llm_output.split('. ', ', but', ', and', ', or', ', nor', ', yet', ', so') if clause.strip()] # split clauses by conjunctions, periods
     results = []
@@ -24,12 +26,14 @@ def compare_clauses(ground_truths, llm_output):
         worst_relationship = None
         contradicted_truths = []
 
+        # Check contrast to each truth once per clause
         for ground_truth in ground_truths:
             ground_truth_vec = encode_text(ground_truth)
             clause_vec = encode_text(clause)
             similarity = cosine_similarity(ground_truth_vec.detach().numpy(), clause_vec.detach().numpy())[0][0]
             relationship = classify_relationship(similarity)
 
+            # Determine the lowest similar between this clause and any ground truth
             if similarity < lowest_similarity:
                 lowest_similarity = similarity
                 worst_relationship = relationship
@@ -39,7 +43,7 @@ def compare_clauses(ground_truths, llm_output):
                 contradicted_truths.append(ground_truth)
         
         sum_lowest_similarities += lowest_similarity
-        results.append((clause, lowest_similarity, worst_relationship, contradicted_truths))
+        results.append((clause, lowest_similarity, worst_relationship, contradicted_truths)) # append results for each clause
 
     accuracy = (sum_lowest_similarities / len(clauses)) * 100 if clauses else 0
     return results, accuracy
