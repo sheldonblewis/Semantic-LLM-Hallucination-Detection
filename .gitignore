@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+benchmark_run.log
+.DS_Store
+/fine_tuned_bert/
+/results/
