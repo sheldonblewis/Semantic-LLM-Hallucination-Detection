@@ -1,0 +1,105 @@
+{
+  "qa": {
+    "n_items": 2000,
+    "n_pairs": 4000,
+    "methods": {
+      "original: cosine of nli logits": {
+        "auroc": 0.51408875,
+        "auprc": 0.48281928988925493,
+        "test_acc_at_dev_threshold": 0.5265,
+        "pairwise_acc": 0.4865
+      },
+      "bert-mnli cross-encoder, 1 - p(entail)": {
+        "auroc": 0.6132865000000001,
+        "auprc": 0.6263829021243135,
+        "test_acc_at_dev_threshold": 0.5845,
+        "pairwise_acc": 0.609
+      },
+      "bert-mnli cross-encoder, p(contradict)": {
+        "auroc": 0.6106670000000001,
+        "auprc": 0.6445048363589319,
+        "test_acc_at_dev_threshold": 0.578,
+        "pairwise_acc": 0.6245
+      },
+      "deberta-v3 nli, 1 - p(entail)": {
+        "auroc": 0.7938302500000001,
+        "auprc": 0.8365076339216665,
+        "test_acc_at_dev_threshold": 0.748,
+        "pairwise_acc": 0.778
+      },
+      "deberta-v3 nli, p(contradict)": {
+        "auroc": 0.73179425,
+        "auprc": 0.7939524767188596,
+        "test_acc_at_dev_threshold": 0.6955,
+        "pairwise_acc": 0.7205
+      },
+      "embedding cosine (minilm)": {
+        "auroc": 0.55353525,
+        "auprc": 0.5457601911239096,
+        "test_acc_at_dev_threshold": 0.549,
+        "pairwise_acc": 0.671
+      },
+      "novel-token rate": {
+        "auroc": 0.580583625,
+        "auprc": 0.5771613080051838,
+        "test_acc_at_dev_threshold": 0.5505,
+        "pairwise_acc": 0.725
+      }
+    },
+    "original_threshold_bands": {
+      "faithful": {
+        ">0.8": 0.3345,
+        "0.4-0.8": 0.206,
+        "<0.4": 0.4595
+      },
+      "hallucinated": {
+        ">0.8": 0.27,
+        "0.4-0.8": 0.242,
+        "<0.4": 0.488
+      }
+    }
+  },
+  "summarization": {
+    "n_items": 200,
+    "n_pairs": 400,
+    "nli_pairs_scored": 4161,
+    "methods": {
+      "deberta-v3, sentence-level (worst sentence)": {
+        "auroc": 0.6167,
+        "auprc": 0.6267663748910131,
+        "test_acc_at_dev_threshold": 0.555,
+        "pairwise_acc": 0.625
+      },
+      "deberta-v3, sentence-level (mean)": {
+        "auroc": 0.6269250000000002,
+        "auprc": 0.638938248807751,
+        "test_acc_at_dev_threshold": 0.58,
+        "pairwise_acc": 0.63
+      },
+      "deberta-v3, whole summary vs first window": {
+        "auroc": 0.650875,
+        "auprc": 0.6714504516573749,
+        "test_acc_at_dev_threshold": 0.57,
+        "pairwise_acc": 0.685
+      },
+      "bert-mnli, sentence-level (worst sentence)": {
+        "auroc": 0.6436499999999999,
+        "auprc": 0.6525884127657733,
+        "test_acc_at_dev_threshold": 0.6,
+        "pairwise_acc": 0.63
+      },
+      "embedding cosine (minilm)": {
+        "auroc": 0.507225,
+        "auprc": 0.5139620832466021,
+        "test_acc_at_dev_threshold": 0.475,
+        "pairwise_acc": 0.495
+      },
+      "novel-token rate": {
+        "auroc": 0.751125,
+        "auprc": 0.7213355906967687,
+        "test_acc_at_dev_threshold": 0.67,
+        "pairwise_acc": 0.775
+      }
+    }
+  }
+}
